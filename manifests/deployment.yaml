@@ -1,0 +1,32 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-tunnel
+  namespace: argocd
+spec:
+  selector:
+    matchLabels:
+      app: argocd-tunnel
+  template:
+    metadata:
+      labels:
+        app: argocd-tunnel
+    spec:
+      containers:
+        - name: argocd-tunnel
+          image: cloudflare/cloudflared
+          command:
+            - cloudflared
+            - tunnel
+          env:
+            - name: TUNNEL_URL
+              value: https://argocd-server
+            - name: NO_TLS_VERIFY
+              value: "true"
+            - name: NO_AUTOUPDATE
+              value: "true"
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
